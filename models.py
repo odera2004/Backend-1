@@ -72,7 +72,7 @@ class Vehicle(db.Model):
 
 user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
    
-TokenBlocklist for managing token revocation
+# TokenBlocklist for managing token revocation
 class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)

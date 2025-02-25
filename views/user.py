@@ -21,7 +21,8 @@ new_user = User(first_name=first_name, last_name=last_name, email=email, passwor
 db.session.add(new_user)
 db.session.commit()
 return jsonify({'msg': 'User created successfully'}), 201
-Fetch all users
+
+# Fetch all users
 @user_bp.route("/users", methods=["GET"])
 def get_users():
     users = User.query.all()

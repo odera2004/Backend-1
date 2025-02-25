@@ -9,7 +9,7 @@ import os
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://autofix_iadg_user:KHxmyFRBpn4DK0LMqtuvvkoeGLHsuZaJ@dpg-cuum73d2ng1s73ert1c0-a.oregon-postgres.render.com/autofix_iadg'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://autofix_ea6q_user:eQdS3bBBEgWi1g3wG8enjN5WDtpvBSMD@dpg-cuurhufnoe9s73amscug-a.oregon-postgres.render.com/autofix_ea6q'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 

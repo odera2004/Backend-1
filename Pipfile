@@ -13,8 +13,8 @@ flask-mail = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
 
-
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.8"

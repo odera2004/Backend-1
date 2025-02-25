@@ -52,8 +52,8 @@ from views import *
 app.register_blueprint(user_bp)
 app.register_blueprint(guard_bp)
 app.register_blueprint(billing_bp)
-app.register_blueprint(auth_bp)
-
+app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(work_order_bp, url_prefix="/api")
 
 
 @jwt.token_in_blocklist_loader

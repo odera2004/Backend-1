@@ -4,7 +4,7 @@ from models import db, User
 
 user_bp = Blueprint('user_bp', name)
 
-Add a user (admin/technician/guard)
+# Add a user (admin/technician/guard)
 @user_bp.route("/user", methods=["POST"])
 def add_user():
     data = request.get_json()
@@ -35,7 +35,7 @@ def get_users():
         })
     return jsonify(output), 200
 
-Fetch a single user by ID
+# Fetch a single user by ID
 @user_bp.route("/users/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     user = User.query.get(user_id)
@@ -49,7 +49,7 @@ def get_user(user_id):
     else:
         return jsonify({'msg': 'User not found'}), 404
 
-Update a user
+# Update a user
 @user_bp.route("/users/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     data = request.get_json()
@@ -64,7 +64,7 @@ if user:
     return jsonify({'msg': 'User updated successfully'}), 200
 else:
     return jsonify({'msg': 'User not found'}), 404
-Delete a user
+# Delete a user
 @user_bp.route("/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.get(user_id)

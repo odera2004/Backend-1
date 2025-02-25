@@ -46,7 +46,7 @@ if user:
     return jsonify({"access_token": access_token}), 200
 else:
     return jsonify({"error": "User not found "}), 404
-current user
+# current user
 @auth_bp.route('/current_user', methods=['GET'])
 @jwt_required()
 def current_user():
@@ -61,7 +61,7 @@ def current_user():
     }
     return jsonify(user_data)
 
-Logout
+# Logout
 @auth_bp.route("/logout", methods=["DELETE"])
 @jwt_required()
 def logout():

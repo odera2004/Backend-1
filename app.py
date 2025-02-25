@@ -2,6 +2,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail, Message
+from flask_cors import CORS  # Import CORS
 from datetime import timedelta
 from models import db, TokenBlocklist
 import os

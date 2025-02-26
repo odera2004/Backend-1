@@ -1,27 +1,12 @@
 from flask import Blueprint, request, jsonify
 from models import db, WorkOrder, Technician, User, WorkOrderPart, Part
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 work_order_bp = Blueprint('work_order_bp', __name__)
 
-# Function to check if the user is a technician
-def check_if_technician():
-    user_id = get_jwt_identity()  # Get user id from the JWT token
-    user = User.query.get(user_id)  # Fetch the user from the database
-    if user and user.technician:  # Check if the user is a technician
-        return True
-    return False
-
 # Add a new work order (Technician or Admin can create a work order)
 @work_order_bp.route("/work_order", methods=["POST"])
-@jwt_required()  # Ensure the user is authenticated
 def add_work_order():
     data = request.get_json()
-    
-    # Ensure the user is authenticated and authorized as a technician or admin
-    if not check_if_technician():
-        return jsonify({'msg': 'Only technicians can create a work order'}), 403
-
     description = data['description']
     status = data.get('status', 'Pending')
     technician_id = data.get('technician_id')
@@ -33,9 +18,8 @@ def add_work_order():
 
     return jsonify({'msg': 'Work order created successfully'}), 201
 
-# Fetch all work orders (Any authenticated user can view)
+# Fetch all work orders (Any user can view)
 @work_order_bp.route("/work_orders", methods=["GET"])
-@jwt_required()  # Ensure the user is authenticated
 def get_work_orders():
     work_orders = WorkOrder.query.all()
     output = []
@@ -50,9 +34,8 @@ def get_work_orders():
         })
     return jsonify(output), 200
 
-# Fetch a specific work order by ID (Any authenticated user can view)
+# Fetch a specific work order by ID (Any user can view)
 @work_order_bp.route("/work_orders/<int:work_order_id>", methods=["GET"])
-@jwt_required()  # Ensure the user is authenticated
 def get_work_order(work_order_id):
     work_order = WorkOrder.query.get(work_order_id)
     if work_order:
@@ -67,23 +50,13 @@ def get_work_order(work_order_id):
     else:
         return jsonify({'msg': 'Work order not found'}), 404
 
-# Update a work order (Only Technician can edit their assigned work order)
+# Update a work order
 @work_order_bp.route("/work_orders/<int:work_order_id>", methods=["PUT"])
-@jwt_required()  # Ensure the user is authenticated
 def update_work_order(work_order_id):
-    if not check_if_technician():
-        return jsonify({'msg': 'Only technicians can update a work order'}), 403
-
     data = request.get_json()
     work_order = WorkOrder.query.get(work_order_id)
 
     if work_order:
-        # Only allow the technician to edit their own assigned work order
-        user_id = get_jwt_identity()
-        technician = Technician.query.filter_by(user_id=user_id).first()
-        if work_order.technician_id != technician.id:
-            return jsonify({'msg': 'You can only edit your own assigned work orders'}), 403
-
         work_order.description = data.get('description', work_order.description)
         work_order.status = data.get('status', work_order.status)
         
@@ -92,35 +65,21 @@ def update_work_order(work_order_id):
     else:
         return jsonify({'msg': 'Work order not found'}), 404
 
-# Delete a work order (Only Technician can delete their assigned work order)
+# Delete a work order
 @work_order_bp.route("/work_orders/<int:work_order_id>", methods=["DELETE"])
-@jwt_required()  # Ensure the user is authenticated
 def delete_work_order(work_order_id):
-    if not check_if_technician():
-        return jsonify({'msg': 'Only technicians can delete a work order'}), 403
-
     work_order = WorkOrder.query.get(work_order_id)
 
     if work_order:
-        # Only allow the technician to delete their own assigned work order
-        user_id = get_jwt_identity()
-        technician = Technician.query.filter_by(user_id=user_id).first()
-        if work_order.technician_id != technician.id:
-            return jsonify({'msg': 'You can only delete your own assigned work orders'}), 403
-
         db.session.delete(work_order)
         db.session.commit()
         return jsonify({'msg': 'Work order deleted successfully'}), 200
     else:
         return jsonify({'msg': 'Work order not found'}), 404
 
-# Add parts to a work order (Only Technician can add parts)
+# Add parts to a work order
 @work_order_bp.route("/work_orders/<int:work_order_id>/parts", methods=["POST"])
-@jwt_required()  # Ensure the user is authenticated
 def add_parts_to_work_order(work_order_id):
-    if not check_if_technician():
-        return jsonify({'msg': 'Only technicians can add parts to a work order'}), 403
-
     data = request.get_json()
     quantity = data['quantity']
     part_id = data['part_id']

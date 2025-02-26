@@ -10,6 +10,8 @@ class User(db.Model):
     email = db.Column(db.String(128), nullable=False, unique=True)
     password = db.Column(db.String(512), nullable=False)
     role = db.Column(db.String(20), nullable=False, default="user")
+    profile_picture = db.Column(db.String(256), nullable=True, default="default.jpg")
+
 
 # Relationship for technician, guard, admin
 technician = db.relationship('Technician', backref='user', uselist=False)

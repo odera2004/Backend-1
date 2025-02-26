@@ -4,13 +4,14 @@ from flask_jwt_extended import JWTManager
 from flask_mail import Mail, Message
 from flask_cors import CORS  # Import CORS
 from datetime import timedelta
+from flask_cors import CORS  # Import CORS
 from models import db, TokenBlocklist
 import os
 
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://autofix_ea6q_user:eQdS3bBBEgWi1g3wG8enjN5WDtpvBSMD@dpg-cuurhufnoe9s73amscug-a.oregon-postgres.render.com/autofix_ea6q'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lost.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
@@ -54,8 +55,11 @@ from views import *
 app.register_blueprint(user_bp)
 app.register_blueprint(guard_bp)
 app.register_blueprint(billing_bp)
+app.register_blueprint(vehicle_bp)
+app.register_blueprint(technician_bp)
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(work_order_bp, url_prefix="/api")
+app.register_blueprint(parts_bp, url_prefix="/admin")
 
 
 @jwt.token_in_blocklist_loader

@@ -11,7 +11,7 @@ import os
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lost.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://automation_70iv_user:wMu3HipM5SQAn3P6xfZC7oUyQZmI2m4K@dpg-cuvh1ia3esus73bqd8a0-a.oregon-postgres.render.com/automation_70iv'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 

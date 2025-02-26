@@ -16,12 +16,14 @@ class User(db.Model):
 # Relationship for technician, guard, admin
 technician = db.relationship('Technician', backref='user', uselist=False)
 guard = db.relationship('Guard', backref='user', uselist=False)
+
 class Technician(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    skill_set = db.Column(db.String(256), nullable=True)  # Skills the technician is trained in
+    skill_set = db.Column(db.String(256), nullable=True)  
 
 work_orders = db.relationship("WorkOrder", backref="technician", lazy=True)
+
 class Guard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -29,6 +31,8 @@ class Guard(db.Model):
     shift_end = db.Column(db.String, nullable=False)
 
 work_orders = db.relationship("WorkOrder", backref="guard", lazy=True)
+
+
 class Part(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
@@ -37,6 +41,8 @@ class Part(db.Model):
 
 # For tracking which work orders used this part
 work_orders = db.relationship("WorkOrderPart", backref="part", lazy=True)
+
+
 class WorkOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256), nullable=False)
@@ -51,6 +57,8 @@ class WorkOrder(db.Model):
 # Relationships to other models
 parts = db.relationship("WorkOrderPart", backref="work_order", lazy=True)
 billing = db.relationship("Billing", backref="work_order", uselist=False)
+
+
 class Billing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     total_amount = db.Column(db.Float, nullable=False)

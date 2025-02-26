@@ -24,10 +24,14 @@ def get_technicians():
         output.append({
             'id': technician.id,
             'user_id': technician.user_id,
+            'first_name': technician.user.first_name, 
+            'last_name': technician.user.last_name,  
+            'email': technician.user.email,          
             'skill_set': technician.skill_set,
-            'active': technician.active
+            'role': 'Technician'
         })
     return jsonify(output), 200
+
 
 # Fetch a technician by ID
 @technician_bp.route("/technicians/<int:technician_id>", methods=["GET"])

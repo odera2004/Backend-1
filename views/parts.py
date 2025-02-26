@@ -6,7 +6,6 @@ parts_bp = Blueprint('parts_bp', __name__)
 
 # Create a new part
 @parts_bp.route("/parts", methods=["POST"])
-@jwt_required()
 def add_part():
     data = request.get_json()
     name = data.get('name')
@@ -51,7 +50,6 @@ def get_part(part_id):
 
 # Update a part
 @parts_bp.route("/parts/<int:part_id>", methods=["PUT"])
-@jwt_required()
 def update_part(part_id):
     part = Part.query.get(part_id)
     if not part:
@@ -67,7 +65,6 @@ def update_part(part_id):
 
 # Delete a part
 @parts_bp.route("/parts/<int:part_id>", methods=["DELETE"])
-@jwt_required()
 def delete_part(part_id):
     part = Part.query.get(part_id)
     if not part:

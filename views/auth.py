@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt, create_a
 from werkzeug.security import check_password_hash
 from datetime import datetime, timezone
 
-auth_bp = Blueprint('auth', __name__)  # FIXED: __name__ instead of name
+auth_bp = Blueprint('auth', __name__)  
 
 # Login
 @auth_bp.route('/login', methods=['POST'])
@@ -61,7 +61,7 @@ def current_user():
 
     user_data = {
         'id': user.id,
-        'first_name': user.first_name,  # FIXED: Corrected key name
+        'first_name': user.first_name,  
         'last_name': user.last_name,
         'email': user.email
     }

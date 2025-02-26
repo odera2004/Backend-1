@@ -6,3 +6,4 @@ from .work_order import *
 from .vehicle import *
 from .guard import *
 from .auth import *
+from .work_orderpart import *

@@ -8,9 +8,9 @@ def add_vehicle():
     data = request.get_json()
     number_plate = data.get('number_plate')
     car_model = data.get('car_model')
-    user_id = data.get('user_id')  
+    user_id = data.get('user_id')  # Ensure user_id is fetched
     
-    if not all([number_plate, car_model, user_id]): 
+    if not all([number_plate, car_model, user_id]):  # Ensure all required fields are present
         return jsonify({'msg': 'Missing required fields'}), 400
 
     vehicle = Vehicle(number_plate=number_plate, car_model=car_model, user_id=user_id)
@@ -70,7 +70,7 @@ def delete_vehicle(vehicle_id):
     else:
         return jsonify({'msg': 'Vehicle not found'}), 404
     
-#Security Checkout
+  
 @vehicle_bp.route('/checkout', methods=['POST'])
 def security_checkout():
     data = request.get_json()

@@ -7,24 +7,25 @@ work_order_bp = Blueprint('work_order_bp', __name__)
 @work_order_bp.route("/work_order", methods=["POST"])
 def add_work_order():
     data = request.get_json()
-    
+
     description = data['description']
-    status = data.get('status', 'Pending')  
+    status = data.get('status', 'Pending')
     technician_id = data.get('technician_id')
     guard_id = data.get('guard_id')
     vehicle_id = data.get('vehicle_id')
 
     new_work_order = WorkOrder(
-        description=description, 
-        status=status, 
-        technician_id=technician_id, 
-        guard_id=guard_id, 
+        description=description,
+        status=status,
+        technician_id=technician_id,
+        guard_id=guard_id,
         vehicle_id=vehicle_id
     )
     db.session.add(new_work_order)
     db.session.commit()
 
     return jsonify({'msg': 'Work order created successfully'}), 201
+
 
 # Fetch all work orders
 @work_order_bp.route("/work_orders", methods=["GET"])
@@ -97,4 +98,21 @@ def delete_work_order(work_order_id):
     else:
         return jsonify({'msg': 'Work order not found'}), 404
 
+# Add parts to a work order
+@work_order_bp.route("/work_orders/<int:work_order_id>/parts", methods=["POST"])
+def add_parts_to_work_order(work_order_id):
+    data = request.get_json()
+    quantity = data['quantity']
+    part_id = data['part_id']
 
+    # Check if the part exists
+    part = Part.query.get(part_id)
+    if not part:
+        return jsonify({'msg': 'Part not found'}), 404
+
+    # Create the WorkOrderPart
+    new_work_order_part = WorkOrderPart(work_order_id=work_order_id, part_id=part_id, quantity=quantity)
+    db.session.add(new_work_order_part)
+    db.session.commit()
+
+    return jsonify({'msg': 'Part added to work order successfully'}), 201

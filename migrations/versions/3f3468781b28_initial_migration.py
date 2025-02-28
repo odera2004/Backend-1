@@ -1,8 +1,8 @@
-"""Initial migration.
+"""Initial migration
 
-Revision ID: ab05f05e2c88
+Revision ID: 3f3468781b28
 Revises: 
-Create Date: 2025-02-26 15:06:54.066570
+Create Date: 2025-02-24 22:45:52.873226
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ab05f05e2c88'
+revision = '3f3468781b28'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,12 +44,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
-    op.create_table('vehicle',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('number_plate', sa.String(length=128), nullable=False),
-    sa.Column('car_model', sa.String(length=128), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('guard',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -62,6 +56,14 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('skill_set', sa.String(length=256), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('vehicle',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('number_plate', sa.String(length=128), nullable=False),
+    sa.Column('car_model', sa.String(length=128), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -107,9 +109,9 @@ def downgrade():
     op.drop_table('work_order_part')
     op.drop_table('billing')
     op.drop_table('work_order')
+    op.drop_table('vehicle')
     op.drop_table('technician')
     op.drop_table('guard')
-    op.drop_table('vehicle')
     op.drop_table('user')
     with op.batch_alter_table('token_blocklist', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_token_blocklist_jti'))

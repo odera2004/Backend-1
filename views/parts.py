@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from models import db, Part
-from flask_jwt_extended import jwt_required
 
 parts_bp = Blueprint('parts_bp', __name__)
 

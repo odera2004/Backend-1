@@ -1,38 +1,34 @@
 from flask import Blueprint, request, jsonify
-from models import db, Billing, WorkOrder, WorkOrderPart, Part
+from models import db, Billing, WorkOrder
 from datetime import datetime
 
 billing_bp = Blueprint('billing_bp', __name__)
 
-# Add Billing
+# Add a new billing
 @billing_bp.route("/billing", methods=["POST"])
 def add_billing():
     data = request.get_json()
 
     total_amount = data['total_amount']
-    due_date = datetime.strptime(data['due_date'], "%Y-%m-%dT%H:%M:%S")
-    payment_date = datetime.strptime(data['due_date'], "%Y-%m-%dT%H:%M:%S")
+    due_date = datetime.strptime(data["due_date"], "%Y-%m-%d")
     work_order_id = data['work_order_id']
-    payment_status = data.get('payment_status', 'Pending')
+    payment_status = data.get('payment_status', 'Pending')  # Default to 'Pending' if not provided
 
+    # Handle optional payment_date
+    payment_date = None
+    if data.get("payment_date"):  # Check if payment_date is provided and not empty
+        payment_date = datetime.strptime(data["payment_date"], "%Y-%m-%d")
+
+    # Ensure work order exists
     work_order = WorkOrder.query.get(work_order_id)
     if not work_order:
         return jsonify({'msg': 'Work order not found'}), 404
 
-    # Fetch all parts used in the work order
-    work_order_parts = WorkOrderPart.query.filter_by(work_order_id=work_order_id).all()
-    for work_order_part in work_order_parts:
-        part = Part.query.get(work_order_part.part_id)
-        if part:
-            if part.quantity < work_order_part.quantity:
-                return jsonify({'msg': f'Not enough stock for part {part.name}'}), 400
-            part.quantity -= work_order_part.quantity  # Deduct stock
-
-    # Create the billing entry
+    # Create a new billing entry
     new_billing = Billing(
         total_amount=total_amount,
         due_date=due_date,
-        payment_date=payment_date,
+        payment_date=payment_date,  # This can be None if not provided
         payment_status=payment_status,
         work_order_id=work_order_id
     )
@@ -40,8 +36,7 @@ def add_billing():
     db.session.add(new_billing)
     db.session.commit()
 
-    return jsonify({'msg': 'Billing created successfully, parts stock updated'}), 201
-
+    return jsonify({'msg': 'Billing created successfully'}), 201
 # Fetch all billings
 @billing_bp.route("/billings", methods=["GET"])
 def get_billings():
@@ -51,7 +46,9 @@ def get_billings():
         output.append({
             'id': billing.id,
             'total_amount': billing.total_amount,
-            'due_date': billing.due_date,
+            'due_date': billing.due_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            'payment_date': billing.payment_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            'payment_status': billing.payment_status,
             'work_order_id': billing.work_order_id
         })
     return jsonify(output), 200
@@ -64,7 +61,9 @@ def get_billing(billing_id):
         return jsonify({
             'id': billing.id,
             'total_amount': billing.total_amount,
-            'due_date': billing.due_date,
+            'due_date': billing.due_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            'payment_date': billing.payment_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            'payment_status': billing.payment_status,
             'work_order_id': billing.work_order_id
         }), 200
     else:
@@ -78,9 +77,11 @@ def update_billing(billing_id):
 
     if billing:
         billing.total_amount = data.get('total_amount', billing.total_amount)
-        billing.due_date = data.get('due_date', billing.due_date)
+        billing.due_date = datetime.strptime(data.get('due_date', billing.due_date.strftime("%Y-%m-%dT%H:%M:%S")), "%Y-%m-%dT%H:%M:%S")
+        billing.payment_date = datetime.strptime(data.get('payment_date', billing.payment_date.strftime("%Y-%m-%dT%H:%M:%S")), "%Y-%m-%dT%H:%M:%S")
+        billing.payment_status = data.get('payment_status', billing.payment_status)
         billing.work_order_id = data.get('work_order_id', billing.work_order_id)
-        
+
         # Ensure work order exists
         if billing.work_order_id:
             work_order = WorkOrder.query.get(billing.work_order_id)

@@ -8,15 +8,14 @@ billing_bp = Blueprint('billing_bp', __name__)
 @billing_bp.route("/billing", methods=["POST"])
 def add_billing():
     data = request.get_json()
-
     total_amount = data['total_amount']
     due_date = datetime.strptime(data["due_date"], "%Y-%m-%d")
     work_order_id = data['work_order_id']
-    payment_status = data.get('payment_status', 'Pending')  # Default to 'Pending' if not provided
+    payment_status = data.get('payment_status', 'Pending') 
 
     # Handle optional payment_date
     payment_date = None
-    if data.get("payment_date"):  # Check if payment_date is provided and not empty
+    if data.get("payment_date"):  
         payment_date = datetime.strptime(data["payment_date"], "%Y-%m-%d")
 
     # Ensure work order exists
@@ -28,7 +27,7 @@ def add_billing():
     new_billing = Billing(
         total_amount=total_amount,
         due_date=due_date,
-        payment_date=payment_date,  # This can be None if not provided
+        payment_date=payment_date, 
         payment_status=payment_status,
         work_order_id=work_order_id
     )
@@ -37,6 +36,7 @@ def add_billing():
     db.session.commit()
 
     return jsonify({'msg': 'Billing created successfully'}), 201
+
 # Fetch all billings
 @billing_bp.route("/billings", methods=["GET"])
 def get_billings():
@@ -77,8 +77,8 @@ def update_billing(billing_id):
 
     if billing:
         billing.total_amount = data.get('total_amount', billing.total_amount)
-        billing.due_date = datetime.strptime(data.get('due_date', billing.due_date.strftime("%Y-%m-%dT%H:%M:%S")), "%Y-%m-%dT%H:%M:%S")
-        billing.payment_date = datetime.strptime(data.get('payment_date', billing.payment_date.strftime("%Y-%m-%dT%H:%M:%S")), "%Y-%m-%dT%H:%M:%S")
+        billing.due_date = datetime.strptime(data["due_date"], "%Y-%m-%d")
+        billing.payment_date = datetime.strptime(data["payment_date"], "%Y-%m-%d")
         billing.payment_status = data.get('payment_status', billing.payment_status)
         billing.work_order_id = data.get('work_order_id', billing.work_order_id)
 

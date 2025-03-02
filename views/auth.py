@@ -23,19 +23,16 @@ def login():
 
     # Check if the user exists and the password is correct
     if user and check_password_hash(user.password, password):
-        # Create access token with the user's ID as the identity
         access_token = create_access_token(identity=user.id)
-
-        # Include user details (e.g., role) in the response
         user_data = {
             "id": user.id,
             "email": user.email,
-            "role": user.role  # Ensure the role is included
+            "role": user.role  
         }
 
         return jsonify({
             "access_token": access_token,
-            "user": user_data  # Include user details in the response
+            "user": user_data 
         }), 200
     else:
         return jsonify({"error": "Invalid email or password"}), 401
@@ -72,10 +69,10 @@ def current_user():
 
     user_data = {
         'id': user.id,
-        'first_name': user.first_name,  # Fixed typo: 'firs_tname' -> 'first_name'
+        'first_name': user.first_name,  
         'last_name': user.last_name,
         'email': user.email,
-        'role': user.role  # Ensure the role is included in the response
+        'role': user.role  
     }
     return jsonify(user_data), 200
 

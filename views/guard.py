@@ -25,9 +25,9 @@ def get_guards():
         output.append({
             'id': guard.id,
             'user_id': guard.user_id,
-            'first_name': guard.user.first_name,  # ✅ Fetch from User
-            'last_name': guard.user.last_name,    # ✅ Fetch from User
-            'email': guard.user.email,           # ✅ Fetch from User
+            'first_name': guard.user.first_name,  
+            'last_name': guard.user.last_name,  
+            'email': guard.user.email,           
             'shift_start': guard.shift_start,
             'shift_end': guard.shift_end,
             'role': 'Guard'

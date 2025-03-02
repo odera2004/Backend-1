@@ -4,7 +4,7 @@ from models import db, User,Technician,Guard
 
 user_bp = Blueprint('user_bp', __name__)
 
-# Add a user (admin/technician/guard)
+# Add a user 
 @user_bp.route("/user", methods=["POST"])
 def add_user():
     data = request.get_json()
@@ -12,7 +12,7 @@ def add_user():
     last_name = data["last_name"]
     email = data['email']
     password = generate_password_hash(data['password'])
-    role = data.get('role', 'user')  # Default role is 'user'
+    role = data.get('role', 'user') 
 
     if User.query.filter_by(email=email).first():
         return jsonify({'msg': 'User already exists'}), 400
@@ -30,11 +30,24 @@ def get_users():
     for user in users:
         output.append({
             'id': user.id,
-            'username': user.username,
+            'first name': user.first_name,
+            'last name': user.last_name,
             'email': user.email,
-            'role': user.role
         })
     return jsonify(output), 200
+
+#Fetch User by Email
+@user_bp.route("/users/email/<string:email>", methods=["GET"])
+def get_user_by_email(email):
+    user = User.query.filter_by(email=email).first()
+    
+    if not user:
+        return jsonify({'msg': 'User does not exist'}), 404
+    
+    return jsonify({
+        'id': user.id,
+    }), 200
+
 
 # Fetch a single user by ID
 @user_bp.route("/users/<int:user_id>", methods=["GET"])
@@ -77,6 +90,8 @@ def delete_user(user_id):
     else:
         return jsonify({'msg': 'User not found'}), 404
     
+
+#Change Role of user
 @user_bp.route("/promote_user", methods=["POST"])
 def promote_user():
     data = request.get_json()
@@ -93,8 +108,7 @@ def promote_user():
     user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({"msg": "User not found"}), 404
-
-    # Update role in User table
+    
     user.role = role  
 
     try:

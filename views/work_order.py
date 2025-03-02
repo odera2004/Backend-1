@@ -10,6 +10,7 @@ def add_work_order():
 
     description = data['description']
     status = data.get('status', 'Pending')
+    user_id =data.get('user_id')
     technician_id = data.get('technician_id')
     guard_id = data.get('guard_id')
     vehicle_id = data.get('vehicle_id')
@@ -17,6 +18,7 @@ def add_work_order():
     new_work_order = WorkOrder(
         description=description,
         status=status,
+        user_id=user_id,
         technician_id=technician_id,
         guard_id=guard_id,
         vehicle_id=vehicle_id
@@ -30,7 +32,13 @@ def add_work_order():
 # Fetch all work orders
 @work_order_bp.route("/work_orders", methods=["GET"])
 def get_work_orders():
-    work_orders = WorkOrder.query.all()
+    technician_id = request.args.get('technician_id')  
+
+    if technician_id:
+        work_orders = WorkOrder.query.filter_by(technician_id=technician_id).all()
+    else:
+        work_orders = WorkOrder.query.all()
+
     output = []
 
     for work_order in work_orders:
@@ -47,13 +55,23 @@ def get_work_orders():
             'description': work_order.description,
             'status': work_order.status,
             'created_at': work_order.created_at,
-            'technician': technician_name, 
+            'technician': technician_name,
+            'technician_id': work_order.technician_id,  
             'guard_id': work_order.guard_id,
-            'vehicle_number_plate': vehicle_number_plate  
+            'vehicle_number_plate': vehicle_number_plate
         })
 
     return jsonify(output), 200
 
+# Fetch Technician by User ID
+@work_order_bp.route("/technician", methods=["GET"])
+def get_technician_by_user_id():
+    user_id = request.args.get('user_id')
+    technician = Technician.query.filter_by(user_id=user_id).first()
+    if technician:
+        return jsonify({'id': technician.id}), 200
+    else:
+        return jsonify({'msg': 'Technician not found'}), 404
 
 # Fetch a specific work order by ID
 @work_order_bp.route("/work_orders/<int:work_order_id>", methods=["GET"])

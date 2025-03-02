@@ -24,9 +24,9 @@ def get_technicians():
         output.append({
             'id': technician.id,
             'user_id': technician.user_id,
-            'first_name': technician.user.first_name,  # ✅ Fetch from User
-            'last_name': technician.user.last_name,    # ✅ Fetch from User
-            'email': technician.user.email,           # ✅ Fetch from User
+            'first_name': technician.user.first_name,  
+            'last_name': technician.user.last_name,    
+            'email': technician.user.email,           
             'skill_set': technician.skill_set,
             'role': 'Technician'
         })

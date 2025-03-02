@@ -70,7 +70,7 @@ def delete_vehicle(vehicle_id):
     else:
         return jsonify({'msg': 'Vehicle not found'}), 404
     
-  
+#Verification for checkout clearance  
 @vehicle_bp.route('/checkout', methods=['POST'])
 def security_checkout():
     data = request.get_json()
@@ -79,17 +79,17 @@ def security_checkout():
     if not vehicle_plate:
         return jsonify({"error": "Vehicle plate is required"}), 400
 
-    # Step 1: Find the vehicle by number plate
-    vehicle = Vehicle.query.filter_by(number_plate=vehicle_plate).first()  # Use number_plate
+    #Find the vehicle by number plate
+    vehicle = Vehicle.query.filter_by(number_plate=vehicle_plate).first() 
 
     if not vehicle:
         return jsonify({"status": "Error", "message": "Vehicle not found"}), 404
 
-    # Step 2: Check if there's any pending Work Order for this vehicle
+    # Check if there's any pending Work Order for this vehicle
     pending_work_order = WorkOrder.query.filter_by(vehicle_id=vehicle.id, status="Pending").first()
 
     if pending_work_order:
-        # Step 3: Check if this work order has a pending bill
+        #Check if this work order has a pending bill
         pending_bill = Billing.query.filter_by(work_order_id=pending_work_order.id, payment_status="Pending").first()
         
         if pending_bill:

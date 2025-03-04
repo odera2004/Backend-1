@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 3f3468781b28
+Revision ID: f2aa322f84ec
 Revises: 
-Create Date: 2025-02-24 22:45:52.873226
+Create Date: 2025-03-04 23:28:05.600817
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3f3468781b28'
+revision = 'f2aa322f84ec'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,8 +47,8 @@ def upgrade():
     op.create_table('guard',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('shift_start', sa.String(), nullable=False),
-    sa.Column('shift_end', sa.String(), nullable=False),
+    sa.Column('shift_start', sa.String(), nullable=True),
+    sa.Column('shift_end', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -59,34 +59,25 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('vehicle',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('number_plate', sa.String(length=128), nullable=False),
-    sa.Column('car_model', sa.String(length=128), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('work_order',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('description', sa.String(length=256), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('status', sa.String(length=64), nullable=True),
-    sa.Column('vehicle_id', sa.Integer(), nullable=True),
+    sa.Column('number_plate', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('technician_id', sa.Integer(), nullable=True),
     sa.Column('guard_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['guard_id'], ['guard.id'], ),
     sa.ForeignKeyConstraint(['technician_id'], ['technician.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['vehicle_id'], ['vehicle.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('billing',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('total_amount', sa.Float(), nullable=False),
     sa.Column('due_date', sa.DateTime(), nullable=False),
-    sa.Column('payment_date', sa.DateTime(), nullable=False),
+    sa.Column('payment_date', sa.DateTime(), nullable=True),
     sa.Column('payment_status', sa.String(length=64), nullable=True),
     sa.Column('work_order_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['work_order_id'], ['work_order.id'], ),
@@ -109,7 +100,6 @@ def downgrade():
     op.drop_table('work_order_part')
     op.drop_table('billing')
     op.drop_table('work_order')
-    op.drop_table('vehicle')
     op.drop_table('technician')
     op.drop_table('guard')
     op.drop_table('user')

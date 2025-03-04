@@ -31,8 +31,6 @@ def add_work_order_part():
 
     if not work_order_id or not part_name or not quantity_used:
         return jsonify({'msg': 'Missing required fields'}), 400
-
-    # Convert quantity_used to an integer
     try:
         quantity_used = int(quantity_used)
     except ValueError:

@@ -40,17 +40,33 @@ def add_billing():
 # Fetch all billings
 @billing_bp.route("/billings", methods=["GET"])
 def get_billings():
-    billings = Billing.query.all()
+    user_id = request.args.get('user_id')  # Get the current user's ID from the request
+    status_filter = request.args.get('status')  # Filter by payment status (optional)
+
+    # Base query
+    query = Billing.query.join(WorkOrder)  # Join with WorkOrder table
+
+    # Apply user filter (only fetch billings for the current user)
+    if user_id:
+        query = query.filter(WorkOrder.user_id == user_id)
+
+    # Apply status filter (optional)
+    if status_filter:
+        query = query.filter(Billing.payment_status == status_filter)
+
+    billings = query.all()
+
     output = []
     for billing in billings:
         output.append({
             'id': billing.id,
             'total_amount': billing.total_amount,
             'due_date': billing.due_date.strftime("%Y-%m-%dT%H:%M:%S"),
-            'payment_date': billing.payment_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            'payment_date': billing.payment_date.strftime("%Y-%m-%dT%H:%M:%S") if billing.payment_date else None,
             'payment_status': billing.payment_status,
             'work_order_id': billing.work_order_id
         })
+
     return jsonify(output), 200
 
 # Fetch a single billing by ID

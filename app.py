@@ -6,8 +6,6 @@ from models import db, TokenBlocklist
 from flask_cors import CORS
 from flask_mail import Mail, Message
 
-
-
 app = Flask(__name__)
 
 CORS(app)
@@ -26,8 +24,8 @@ jwt.init_app(app)
 # Email configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'eugine.odera@student.moringaschool.com'  # Use a simpler environment variable key
-app.config['MAIL_PASSWORD'] ='xcac bhny cgkg wbhd'  # Use a simpler environment variable key
+app.config['MAIL_USERNAME'] = 'eugine.odera@student.moringaschool.com'  
+app.config['MAIL_PASSWORD'] ='xcac bhny cgkg wbhd'  
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']  # Default sender
@@ -72,3 +70,6 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
+
+
+

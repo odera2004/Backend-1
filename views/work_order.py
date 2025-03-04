@@ -32,12 +32,24 @@ def add_work_order():
 # Fetch all work orders
 @work_order_bp.route("/work_orders", methods=["GET"])
 def get_work_orders():
-    technician_id = request.args.get('technician_id')  
+    user_id = request.args.get('user_id')  # Get the current user's ID from the request
+    status_filter = request.args.get('status')  # Filter by status
 
-    if technician_id:
-        work_orders = WorkOrder.query.filter_by(technician_id=technician_id).all()
-    else:
-        work_orders = WorkOrder.query.all()
+    # Base query
+    query = WorkOrder.query
+
+    # Apply user filter (only fetch work orders for the current user)
+    if user_id:
+        query = query.filter_by(user_id=user_id)
+
+    # Apply status filter
+    if status_filter:
+        if status_filter == 'active':
+            query = query.filter(WorkOrder.status.in_(['Pending', 'in progress']))
+        elif status_filter == 'previous':
+            query = query.filter_by(status='completed')
+
+    work_orders = query.all()
 
     output = []
 
@@ -62,7 +74,6 @@ def get_work_orders():
         })
 
     return jsonify(output), 200
-
 # Fetch Technician by User ID
 @work_order_bp.route("/technician", methods=["GET"])
 def get_technician_by_user_id():
@@ -134,3 +145,12 @@ def add_parts_to_work_order(work_order_id):
     db.session.commit()
 
     return jsonify({'msg': 'Part added to work order successfully'}), 201
+
+#Fetch User ID by email
+@work_order_bp.route("/users/email/<email>", methods=["GET"])
+def get_user_by_email(email):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({'id': user.id}), 200
+    else:
+        return jsonify({'msg': 'User not found'}), 404

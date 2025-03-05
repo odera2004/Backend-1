@@ -12,6 +12,7 @@ flask-sqlalchemy = "*"
 flask-mail = "*"
 flask-dance = {extras = ["google"], version = "*"}
 flask-cors = "*"
+gunicorn = "*"
 
 [dev-packages]
 

@@ -56,7 +56,8 @@ def get_user(user_id):
     if user:
         return jsonify({
             'id': user.id,
-            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
             'email': user.email,
             'role': user.role
         }), 200
@@ -69,10 +70,15 @@ def update_user(user_id):
     data = request.get_json()
     user = User.query.get(user_id)
 
-    if user:
-        user.username = data.get('username', user.username)
+    if user: 
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
         user.email = data.get('email', user.email)
-        user.password = data.get('password', user.password)
+        
+        # Hash the password if it's provided
+        if 'password' in data and data['password']:
+            user.password = generate_password_hash(data['password'])
+        
         user.role = data.get('role', user.role)
         db.session.commit()
         return jsonify({'msg': 'User updated successfully'}), 200

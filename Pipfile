@@ -11,8 +11,8 @@ werkzeug = "*"
 flask-sqlalchemy = "*"
 flask-mail = "*"
 flask-dance = {extras = ["google"], version = "*"}
-flask-cors = "*"
 gunicorn = "*"
+flask-cors = "*"
 
 [dev-packages]
 
